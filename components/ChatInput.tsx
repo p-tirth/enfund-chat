@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { View, TextInput, TouchableOpacity } from "react-native"
+import { View, TextInput, TouchableOpacity,Text } from "react-native"
 import { Send } from "lucide-react-native"
 
 interface ChatInputProps {
@@ -29,6 +29,7 @@ export default function ChatInput({  onSend }: ChatInputProps) {
       />
       <TouchableOpacity onPress={handleSend} className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
         <Send size={20} color="#fff" />
+        <Text>bob</Text>
       </TouchableOpacity>
     </View>
   )

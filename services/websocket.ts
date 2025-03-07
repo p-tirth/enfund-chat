@@ -1,96 +1,98 @@
-import type { Message } from "../types"
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import type { Message } from "../types";
 
-type MessageCallback = (message: Message) => void
+type MessageCallback = (message: Message) => void;
 
-class WebSocketService {
-  private socket: WebSocket | null = null
-  private messageCallback: MessageCallback | null = null
-  private reconnectTimeout: NodeJS.Timeout | null = null
+let socket: WebSocket | null = null;
+let messageCallback: MessageCallback | null = null;
+let reconnectTimeout: NodeJS.Timeout | null = null;
 
-  connect(roomId: string, username: string) {
-    // Close any existing connection
-    this.disconnect()
+export const connect = (roomId: string, username: string) => {
+  // Close any existing connection
+  disconnect();
 
-    // Create the WebSocket URL
-    const wsUrl = `wss://chat-api-k4vi.onrender.com/ws/${roomId}/${username}`
-    console.log(wsUrl)
-    console.log("Connecting to WebSocket:", wsUrl)
+  // Create the WebSocket URL
+  const wsUrl = `wss://chat-api-k4vi.onrender.com/ws/${roomId}/${username}`;
+  console.log(wsUrl);
+  console.log("Connecting to WebSocket:", wsUrl);
 
-    try {
-      // Create a new WebSocket connection
-      this.socket = new WebSocket(wsUrl)
-      // console.log(this.socket)
+  try {
+    // Create a new WebSocket connection
+    socket = new WebSocket(wsUrl);
 
-      this.socket.onopen = () => {
-        console.log("WebSocket connection established")
-      }
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+    };
 
-      this.socket.onmessage = (event) => {
-        try {
-          console.log("WebSocket message received:", event.data)
-          const message = JSON.parse(event.data) as Message
-          if (this.messageCallback) {
-            this.messageCallback(message)
-          }
-        } catch (error) {
-          console.error("Error parsing WebSocket message:", error)
-        }
-      }
-
-    } catch (error) {
-      console.error("Error creating WebSocket:", error)
-    }
-  }
-
-  disconnect() {
-    // Clear any pending reconnect timeout
-    if (this.reconnectTimeout) {
-      clearTimeout(this.reconnectTimeout)
-      this.reconnectTimeout = null
-    }
-
-    // Close the socket if it exists
-    if (this.socket) {
+    socket.onmessage = (event: MessageEvent) => {
       try {
-        // Only close if the connection is open or connecting
-        if (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING) {
-          this.socket.close(1000, "Normal closure")
+        console.log("WebSocket message received:", event.data);
+        const message = JSON.parse(event.data) as Message;
+        if (messageCallback) {
+          messageCallback(message);
         }
       } catch (error) {
-        console.error("Error closing WebSocket:", error)
+        console.error("Error parsing WebSocket message:", error);
       }
-      this.socket = null
-    }
+    };
+  } catch (error) {
+    console.error("Error creating WebSocket:", error);
+  }
+};
+
+export const disconnect = () => {
+  // Clear any pending reconnect timeout
+  if (reconnectTimeout) {
+    clearTimeout(reconnectTimeout);
+    reconnectTimeout = null;
   }
 
-  sendMessage(content: string) {
-    if (!this.socket) {
-      console.error("WebSocket is not initialized")
-      return
-    }
-
+  // Close the socket if it exists
+  if (socket) {
     try {
-      console.log("Sending message:", content)
-      this.socket.send(JSON.stringify({ content }))
+      // Only close if the connection is open or connecting
+      if (
+        socket.readyState === WebSocket.OPEN ||
+        socket.readyState === WebSocket.CONNECTING
+      ) {
+        socket.close(1000, "Normal closure");
+      }
     } catch (error) {
-      console.error("Error sending message:", error)
+      console.error("Error closing WebSocket:", error);
     }
+    socket = null;
+  }
+};
+
+export const sendMessage = (content: string) => {
+  if (!socket) {
+    console.error("WebSocket is not initialized");
+    return;
   }
 
-  onMessage(callback: MessageCallback) {
-    this.messageCallback = callback
+  try {
+    console.log("Sending message:", content);
+    const messagePayload = {
+      event: "message",
+      content: content  // Replace with your message content
+    };
+    socket.send(JSON.stringify(messagePayload));
+  } catch (error) {
+    console.error("Error sending message:", error);
   }
+};
 
+export const onMessage = (callback: MessageCallback) => {
+  messageCallback = callback;
+};
 
-  // Check if the WebSocket is connected
-  isConnected(): boolean {
-    return this.socket !== null && this.socket.readyState === WebSocket.OPEN
-  }
-}
+export const isConnected = (): boolean => {
+  return socket !== null && socket.readyState === WebSocket.OPEN;
+};
 
-
-
-export const webSocketService = new WebSocketService()
-
+export const webSocketService = {
+  connect,
+  disconnect,
+  sendMessage,
+  onMessage,
+  isConnected,
+};
