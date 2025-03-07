@@ -12,7 +12,6 @@ export const connect = (roomId: string, username: string) => {
 
   // Create the WebSocket URL
   const wsUrl = `wss://chat-api-k4vi.onrender.com/ws/${roomId}/${username}`;
-  console.log(wsUrl);
   console.log("Connecting to WebSocket:", wsUrl);
 
   try {
@@ -34,6 +33,18 @@ export const connect = (roomId: string, username: string) => {
         console.error("Error parsing WebSocket message:", error);
       }
     };
+
+    socket.onclose = (event) => {
+      console.log(
+        "WebSocket connection closed:",
+        `code=${event.code}`,
+        `reason=${event.reason}`
+      );
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
   } catch (error) {
     console.error("Error creating WebSocket:", error);
   }
@@ -54,12 +65,16 @@ export const disconnect = () => {
         socket.readyState === WebSocket.OPEN ||
         socket.readyState === WebSocket.CONNECTING
       ) {
+        console.log("Closing WebSocket connection...");
         socket.close(1000, "Normal closure");
       }
     } catch (error) {
       console.error("Error closing WebSocket:", error);
     }
     socket = null;
+    console.log("Socket has been set to null.");
+  } else {
+    console.log("No active WebSocket connection to disconnect.");
   }
 };
 
@@ -73,7 +88,7 @@ export const sendMessage = (content: string) => {
     console.log("Sending message:", content);
     const messagePayload = {
       event: "message",
-      content: content  // Replace with your message content
+      content: content,
     };
     socket.send(JSON.stringify(messagePayload));
   } catch (error) {
