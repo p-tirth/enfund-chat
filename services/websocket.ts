@@ -1,9 +1,11 @@
 import type { Message } from "../types";
 
 type MessageCallback = (message: Message) => void;
+// type AlertCallback = (message: Message) => void;
 
 let socket: WebSocket | null = null;
 let messageCallback: MessageCallback | null = null;
+// let alertCallback: MessageCallback | null = null;
 let reconnectTimeout: NodeJS.Timeout | null = null;
 
 export const connect = (roomId: string, username: string) => {
@@ -24,12 +26,17 @@ export const connect = (roomId: string, username: string) => {
 
     socket.onmessage = (event: MessageEvent) => {
       try {
-        console.log("WebSocket message received:", event.data);
         const message = JSON.parse(event.data);
+        console.log(message.event)
+        console.log(message)
+
         if(message.event == "message" ){
-          console.log(message.message)
           if (messageCallback) {
             messageCallback(message.message);
+          }
+        }else{
+          if (messageCallback) {
+            messageCallback(message);
           }
         }
       } catch (error) {

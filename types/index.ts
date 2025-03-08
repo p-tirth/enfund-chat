@@ -13,12 +13,18 @@ export interface User {
   }
   
   export interface Message {
+    event: string
     id: string
     content: string
     created_at: string
-    room_id: string | undefined | null
-    user_id: string | undefined | null
+    room_id: string
+    user_id: string
     username: string
+    users: string[]
   }
+
+  // export interface Alert {
+
+  // }
   
   
