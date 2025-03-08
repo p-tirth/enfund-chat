@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { View, FlatList, ActivityIndicator, Text, TouchableOpacity, RefreshControl } from "react-native"
+import { View, FlatList, ActivityIndicator, Text, TouchableOpacity, RefreshControl, TextInput } from "react-native"
 import { useRouter } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { getRooms } from "../../services/api"
@@ -15,6 +15,7 @@ export default function RoomsListScreen() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
   const router = useRouter()
   const { user } = useUser()
 
@@ -46,35 +47,47 @@ export default function RoomsListScreen() {
     fetchRooms()
   }
 
+  // Filter rooms based on the search query (case-insensitive)
+  const filteredRooms = rooms.filter((room) =>
+    room.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   if (!user) {
     return null // Will redirect in useEffect
   }
 
   return (
-    <SafeAreaView className="bg-white">
+    <SafeAreaView className="bg-white flex-1">
       <Header title="Chat Rooms" />
-      
+
+      {/* Search Input */}
+      <View className="p-2">
+        <TextInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Search rooms..."
+          className="bg-gray-100 rounded-full px-4 py-2"
+        />
+      </View>
+
       {isLoading ? (
-        <View className="">
+        <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#3b82f6" />
         </View>
       ) : (
         <>
           <FlatList
-          className="p-2"
-            data={rooms}
+            className="p-2"
+            data={filteredRooms}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <RoomItem room={item}/>}
+            renderItem={({ item }) => <RoomItem room={item} />}
             refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={handleRefresh}
-              />
+              <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
             }
             // Add bottom padding so the last item doesn't get hidden under the FAB
             contentContainerStyle={{ paddingBottom: 80 }}
             ListEmptyComponent={
-              <View className="  p-10">
+              <View className="p-10">
                 <Text className="text-gray-500 text-center">
                   No rooms available. Create a new room to get started.
                 </Text>
@@ -94,4 +107,3 @@ export default function RoomsListScreen() {
     </SafeAreaView>
   )
 }
-
