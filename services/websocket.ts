@@ -25,9 +25,12 @@ export const connect = (roomId: string, username: string) => {
     socket.onmessage = (event: MessageEvent) => {
       try {
         console.log("WebSocket message received:", event.data);
-        const message = JSON.parse(event.data) as Message;
-        if (messageCallback) {
-          messageCallback(message);
+        const message = JSON.parse(event.data);
+        if(message.event == "message" ){
+          console.log(message.message)
+          if (messageCallback) {
+            messageCallback(message.message);
+          }
         }
       } catch (error) {
         console.error("Error parsing WebSocket message:", error);

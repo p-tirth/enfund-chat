@@ -51,27 +51,38 @@ export default function RoomsListScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="bg-white">
       <Header title="Chat Rooms" />
-
+      
       {isLoading ? (
-        <View className="flex-1 justify-center items-center">
+        <View className="">
           <ActivityIndicator size="large" color="#3b82f6" />
         </View>
       ) : (
         <>
           <FlatList
+          className="p-2"
             data={rooms}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <RoomItem room={item} />}
-            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
+            renderItem={({ item }) => <RoomItem room={item}/>}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+            // Add bottom padding so the last item doesn't get hidden under the FAB
+            contentContainerStyle={{ paddingBottom: 80 }}
             ListEmptyComponent={
-              <View className="flex-1 justify-center items-center p-10">
-                <Text className="text-gray-500 text-center">No rooms available. Create a new room to get started.</Text>
+              <View className="  p-10">
+                <Text className="text-gray-500 text-center">
+                  No rooms available. Create a new room to get started.
+                </Text>
               </View>
             }
           />
 
+          {/* Floating action button */}
           <TouchableOpacity
             className="absolute bottom-6 right-6 bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg"
             onPress={() => router.push("/rooms/create")}

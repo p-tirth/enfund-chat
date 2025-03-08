@@ -34,7 +34,8 @@ export default function ChatScreen() {
         const [roomData, messagesData] = await Promise.all([getRoomDetails(id), getRoomMessages(id)])
 
         setRoom(roomData)
-        console.log(messagesData)
+        console.log("this is the format")
+        console.log(messagesData[0])
         setMessages(messagesData) // Reverse to show newest at the bottom
       } catch (error) {
         console.error("Error fetching room data:", error)
@@ -54,7 +55,7 @@ export default function ChatScreen() {
         webSocketService.connect(id, user.username)
 
         webSocketService.onMessage((newMessage) => {
-          console.log("New message received:", newMessage)
+          // console.log("New message received:", newMessage)
           setMessages((prevMessages) => [newMessage, ...prevMessages])
         })
       } catch (error) {

@@ -16,13 +16,31 @@ export default function RoomItem({ room }: RoomItemProps) {
   }
 
   return (
-    <TouchableOpacity onPress={handlePress} className="flex-row items-center p-4 border-b border-gray-200">
-      <View className="w-10 h-10 rounded-full bg-blue-100 items-center justify-center mr-3">
+    <TouchableOpacity
+      onPress={handlePress}
+      className=" border p-2"
+      style={{display:"flex", flexDirection:"row",padding:5,margin:4,gap:5,borderRadius:10}}
+    >
+      {/* Icon container */}
+      <View className="rounded-full bg-blue-100 mr-3" style={{paddingTop:2}}>
         <MessageSquare size={20} color="#3b82f6" />
       </View>
-      <View className="flex-1">
-        <Text className="text-lg font-medium">{room.name}</Text>
-        <Text className="text-gray-500 text-sm">Created: {new Date(room.created_at).toLocaleDateString()}</Text>
+
+      {/* Text container */}
+      <View className="bg-white text-2xl">
+        {/* Truncate if the name is too long */}
+        <Text
+          className="font-medium"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {room.name}
+        </Text>
+
+        {/* Add a little spacing and style for the date */}
+        <Text className="text-gray-500 text-sm mt-1">
+          Created: {new Date(room.created_at).toLocaleDateString()}
+        </Text>
       </View>
     </TouchableOpacity>
   )

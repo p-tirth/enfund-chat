@@ -16,8 +16,8 @@ export interface User {
     id: string
     content: string
     created_at: string
-    room_id: string
-    user_id: string
+    room_id: string | undefined | null
+    user_id: string | undefined | null
     username: string
   }
   
