@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { View, TextInput, TouchableOpacity,Text } from "react-native"
+import { View, TextInput, TouchableOpacity,Text, StyleSheet } from "react-native"
 import { Send } from "lucide-react-native"
 
 interface ChatInputProps {
@@ -19,19 +19,45 @@ export default function ChatInput({  onSend }: ChatInputProps) {
   }
 
   return (
-    <View className="flex-row items-center p-2 border-t border-gray-200 bg-white">
+    <View style={styles.container}>
       <TextInput
-        className="flex-1 bg-gray-100 rounded-full px-4 py-2 mr-2"
+        style={styles.input}
         placeholder="Type a message..."
         value={message}
         onChangeText={setMessage}
         multiline
       />
-      <TouchableOpacity onPress={handleSend} className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center">
+      <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
         <Send size={20} color="#fff" />
-        <Text>bob</Text>
       </TouchableOpacity>
     </View>
-  )
+  );
 }
 
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',      // tailwind: flex-row
+    alignItems: 'center',      // tailwind: items-center
+    padding: 8,                // tailwind: p-2
+    borderTopWidth: 1,         // tailwind: border-t
+    borderTopColor: '#E5E7EB', // tailwind: border-gray-200
+    backgroundColor: '#FFFFFF' // tailwind: bg-white
+  },
+  input: {
+    flex: 1,                   // tailwind: flex-1
+    backgroundColor: '#F3F4F6',// tailwind: bg-gray-100
+    borderRadius: 9999,        // tailwind: rounded-full
+    paddingHorizontal: 16,     // tailwind: px-4
+    paddingVertical: 8,        // tailwind: py-2
+    marginRight: 8,            // tailwind: mr-2
+  },
+  sendButton: {
+    width: 40,                 // tailwind: w-10
+    height: 40,                // tailwind: h-10
+    borderRadius: 9999,        // tailwind: rounded-full
+    backgroundColor: '#3B82F6',// tailwind: bg-blue-500
+    alignItems: 'center',      // tailwind: items-center
+    justifyContent: 'center',  // tailwind: justify-center
+  },
+});
