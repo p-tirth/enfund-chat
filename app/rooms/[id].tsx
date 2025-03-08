@@ -99,7 +99,7 @@ export default function ChatScreen() {
             ref={flatListRef}
             data={messages}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <MessageItem message={item} isCurrentUser={item.user_id === user?.id} />}
+            renderItem={({ item }) => <MessageItem message={item} isCurrentUser={item.username === user?.username} />}
             inverted // Display newest messages at the bottom
             contentContainerStyle={{ padding: 16 }}
           />
