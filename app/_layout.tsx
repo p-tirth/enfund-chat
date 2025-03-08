@@ -9,6 +9,10 @@ import type { User } from "../types"
 
 import "../global.css"
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs();
+
 // Create a context to manage user state
 type UserContextType = {
   user: User | null
